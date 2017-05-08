@@ -1,0 +1,29 @@
+{
+  "name": "slack-stock",
+  "version": "1.0.0",
+  "description": "Allows you to query stock information using $ATHN or other Stock codes beginning with $",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhicock/slack-stock.git"
+  },
+  "keywords": [
+    "slack",
+    "stock"
+  ],
+  "author": "Dakotah Hicock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dhicock/slack-stock/issues"
+  },
+  "homepage": "https://github.com/dhicock/slack-stock#readme",
+  "dependencies": {
+    "@slack/client": "^3.9.0",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "request": "^2.81.0"
+  }
+}
