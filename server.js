@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-var pg = require('pg');
 var request = require('request');
 var bodyParser = require('body-parser');
 var SlackClient = require('@slack/client').WebClient;
