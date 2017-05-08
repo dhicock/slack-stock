@@ -6,14 +6,16 @@ var SlackClient = require('@slack/client').WebClient;
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8081;
 
 app.post('/stock', function(req, res){
 	res.status(200);
-	if(res.body.challenge){
-		res.send(challenge);
-		res.end();
+	console.log('Message received!\nMessage: '+JSON.stringify(req.body));
+	var challenge = req.body.challenge;
+	if(challenge){
+		res.send(challenge).end();
 	}
+	res.end();
 })
 
 var server = app.listen(port, function() {
