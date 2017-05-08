@@ -13,3 +13,9 @@ app.post('/stock', function(req, res){
 		res.end();
 	}
 })
+
+var server = app.listen(port, function() {
+	var port = server.address().port;
+
+	console.log("listening at port %s", port);
+})
