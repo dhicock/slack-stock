@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
-var regexPattern = new RegExp(/\$[A-Za-z]+/);
+var regexPattern = /\$[A-Za-z]+/g;
 
 app.post('/stock', function(req, res){
 	res.status(200);
@@ -24,8 +24,10 @@ app.post('/stock', function(req, res){
 		return;
 	}
 	var stockArr = text.match(regexPattern);
-	console.log(stockArr);
-	if(!stockArr || stockArr.len == 0){
+	if(stockArr) {
+		console.log('array: %s | len: ' + stockArr.length, stockArr);
+	}
+	if(!stockArr || stockArr.length == 0){
 		console.log('no stocks found');
 		res.end();
 		return;
