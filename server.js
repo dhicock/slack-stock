@@ -17,7 +17,7 @@ app.post('/stock', function(req, res){
 	if(challenge){
 		res.send(challenge);
 	}
-	var text = req.body.text;
+	var text = req.body.event.text;
 	if(!text || text.len == 0){
 		console.log('no text found');
 		res.end();
@@ -29,7 +29,7 @@ app.post('/stock', function(req, res){
 		res.end();
 		return;
 	}
-	var channel = req.body.channel;
+	var channel = req.body.event.channel;
 	res.send(text);
 	res.end();
 })
