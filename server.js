@@ -49,7 +49,7 @@ app.post('/stock', function(req, res){
 			var json = JSON.parse(response.body.replace('//', ''));
 			var formattedJson = formatForSlack(json);
 			formattedJson['channel']=channel;
-			console.log(formattedJson);
+			//console.log(formattedJson);
 			var web = new SlackClient(token);
 			web.chat.postMessage(channel, '', formattedJson, function(err, res){
 				if(err){
