@@ -10,6 +10,8 @@ var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
 var regexPattern = /\$[A-Za-z]+/g;
 var apiUrl = 'http://finance.google.com/finance/info?client=ig&q=NASDAQ%3A';
+var linkUrl = 'https://finance.yahoo.com/quote/';
+var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
 
 app.post('/stock', function(req, res){
 	res.status(200);
@@ -25,9 +27,6 @@ app.post('/stock', function(req, res){
 		return;
 	}
 	var stockArr = text.match(regexPattern);
-	if(stockArr) {
-		console.log('array: %s | len: ' + stockArr.length, stockArr);
-	}
 	if(!stockArr || stockArr.length == 0){
 		//console.log('no stocks found');
 		res.end();
@@ -56,7 +55,7 @@ app.post('/stock', function(req, res){
 				if(err){
 					console.log('Error: ' + err);
 				}else {
-					console.log('Message Sent: ', res);
+					//console.log('Message Sent: ', res);
 				}
 			});
 		}
@@ -78,14 +77,15 @@ function formatForSlack(json, response_type){
 		var afterHoursPrice = element.el;
 		var ticker = element.t;
 
-		var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=' + element.t;
+		var stockUrl = imgUrl + element.t;
 
 		if(changePerc >= 0){
 			attachment['color'] = 'good';
 		} else{
 			attachment['color'] = 'danger';
 		}
-
+		attachment['title'] = "Stock Information for " + ticker;
+		attachment['title_link'] = linkUrl + ticker;
 		attachment['fields'] = [
 			{
 				"title": "Ticker",
@@ -115,7 +115,7 @@ function formatForSlack(json, response_type){
 				"short":true
 			});
 		}
-		attachment["image_url"] = imgUrl;
+		attachment["image_url"] = stockUrl;
 		formattedJson.attachments.push(attachment);
 	});
 	return formattedJson;
