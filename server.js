@@ -86,6 +86,7 @@ function formatForSlack(json, response_type){
 		}
 		attachment['title'] = "Stock Information for " + ticker;
 		attachment['title_link'] = linkUrl + ticker;
+		attachment['text'] = "5 day chart";
 		attachment['fields'] = [
 			{
 				"title": "Ticker",
