@@ -24,6 +24,7 @@ app.post('/stock', function(req, res){
 		return;
 	}
 	var stockArr = text.match(regexPattern);
+	console.log(stockArr);
 	if(!stockArr || stockArr.len == 0){
 		console.log('no stocks found');
 		res.end();
