@@ -28,7 +28,7 @@ app.post('/stock', function(req, res){
 		return;
 	}
 	var channel = req.body.channel;
-	res.send(stockArr);
+	res.send(text);
 	res.end();
 })
 
