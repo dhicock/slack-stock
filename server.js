@@ -12,18 +12,20 @@ var regexPattern = new RegExp(/\$[A-Za-z]+/);
 
 app.post('/stock', function(req, res){
 	res.status(200);
-	console.log('Message received!\nMessage: '+JSON.stringify(req.body));
+	//console.log('Message received!\nMessage: '+JSON.stringify(req.body));
 	var challenge = req.body.challenge;
 	if(challenge){
 		res.send(challenge);
 	}
 	var text = req.body.text;
 	if(!text || text.len == 0){
+		console.log('no text found');
 		res.end();
 		return;
 	}
 	var stockArr = text.match(regexPattern);
 	if(!stockArr || stockArr.len == 0){
+		console.log('no stocks found');
 		res.end();
 		return;
 	}
