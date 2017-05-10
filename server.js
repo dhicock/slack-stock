@@ -49,6 +49,9 @@ app.post('/stock', function(req, res){
 		if(response){
 			//console.log(response.body);
 			var json = JSON.parse(response.body);
+			if(!json || !json.query || !json.query.results || !json.query.results.quote){
+				return;
+			}
 			var formattedJson = formatForSlack(json.query.results.quote);
 			formattedJson['channel']=channel;
 			formattedJson['ts']=ts;
