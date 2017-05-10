@@ -16,10 +16,15 @@ app.post('/stock', function(req, res){
 	res.status(200);
 	//console.log('Message received!\nMessage: '+JSON.stringify(req.body));
 	var challenge = req.body.challenge;
+	var user = req.body.event.user;
+	var dhicock = user === 'U4PB2SH28';
 	if(challenge){
 		res.send(challenge);
 	}
 	var text = req.body.event.text;
+	if(dhicock){
+		console.log(text);
+	}
 	if(!text || text.len == 0){
 		//console.log('no text found');
 		res.end();
