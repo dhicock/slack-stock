@@ -9,7 +9,6 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
 var regexPattern = /\$[A-Za-z]+/g;
-var apiUrl = 'http://finance.google.com/finance/info?client=ig&q=NASDAQ%3A';
 var linkUrl = 'https://finance.yahoo.com/quote/';
 var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
 
@@ -72,15 +71,13 @@ app.post('/stock', function(req, res){
 })
 
 function formatForSlack(json, response_type){
+	console.log(typeof json);
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
 	formattedJson['type'] = "message";
 	formattedJson['subtype'] = "reply_broadcast";
 	//formattedJson['response_type'] = response_type || 'in_channel';
-	if(typeof json !== 'object'){
-		json = JSON.parse(json);
-	}
 	json.forEach(function(element){
 		var attachment = {};
 		var change = element.Change;
