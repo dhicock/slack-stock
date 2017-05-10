@@ -39,17 +39,17 @@ app.post('/stock', function(req, res){
 		symbols.push(element.substring(1));
 	});
 	var tickers = symbols.join(',');
-	var url = apiUrl + tickers;
+	var url = getApiUrl(tickers);
 	request(url, function(error, response, body){
 		if(error){
-			console.log('error googleapi=%s', error);
+			console.log('error yahooapi=%s', error);
 			res.status(500).end();
 			return;
 		}
 		if(response){
 			//console.log(response.body);
-			var json = JSON.parse(response.body.replace('//', ''));
-			var formattedJson = formatForSlack(json);
+			var json = JSON.parse(response.body);
+			var formattedJson = formatForSlack(json.query.results.quote);
 			formattedJson['channel']=channel;
 			formattedJson['ts']=ts;
 			formattedJson['event_ts'] = ts;
@@ -76,11 +76,12 @@ function formatForSlack(json, response_type){
 	//formattedJson['response_type'] = response_type || 'in_channel';
 	json.forEach(function(element){
 		var attachment = {};
-		var change = element.c;
-		var changePerc = element.cp;
-		var price = element.l;
-		var afterHoursPrice = element.el;
-		var ticker = element.t;
+		var change = element.Change;
+		var changePerc = element.PercentChange;
+		var price = element.LastTradePriceOnly;
+		var ticker = element.symbol;
+		var compName = element.Name;
+		var dayOpen = element.Open;
 
 		var stockUrl = imgUrl + element.t;
 
@@ -89,9 +90,8 @@ function formatForSlack(json, response_type){
 		} else{
 			attachment['color'] = 'danger';
 		}
-		attachment['title'] = "Stock Information for " + ticker;
+		attachment['title'] = "Stock Information for " + compName;
 		attachment['title_link'] = linkUrl + ticker;
-		attachment['text'] = "5 day chart";
 		attachment['fields'] = [
 			{
 				"title": "Ticker",
@@ -114,18 +114,17 @@ function formatForSlack(json, response_type){
 				"short": true
 			}
 		];
-		attachment['footer'] = 'Data from Google Finance';
-		if(afterHoursPrice){
-			attachment['fields'].push({
-				"title": "After Hours Price",
-				"value": afterHoursPrice,
-				"short":true
-			});
-		}
+		attachment['footer'] = 'Data from Yahoo Finance';
 		attachment["image_url"] = stockUrl;
 		formattedJson.attachments.push(attachment);
 	});
 	return formattedJson;
+}
+
+function getApiUrl(symb){
+	var query = 'select * from yahoo.finance.quotes where symbol in ("'+symb+'")';
+	var url = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent(query)+'&env=store://datatables.org/alltableswithkeys&format=json';
+	return url;
 }
 
 var server = app.listen(port, function() {
