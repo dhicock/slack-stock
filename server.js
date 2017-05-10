@@ -46,7 +46,11 @@ app.post('/stock', function(req, res){
 	var ts = req.body.event.thread_ts;
 	var symbols = [];
 	stockArr.forEach(function(element) {
-		symbols.push(element.replace(/\$+/, ''));
+		var elem = element.replace(/\$+/, '');
+		if(dhicock){
+			console.log('element: '+ elem);
+		}
+		symbols.push(elem);
 	});
 	var tickers = symbols.join(',');
 	if(dhicock){
