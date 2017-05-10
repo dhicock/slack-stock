@@ -73,8 +73,7 @@ app.post('/stock', function(req, res){
 			}
 			var formattedJson = formatForSlack(json.query.results.quote);
 			formattedJson['channel']=channel;
-			formattedJson['ts']=ts;
-			formattedJson['event_ts'] = ts;
+			formattedJson['thread_ts']=ts;
 			//console.log(formattedJson);
 			var web = new SlackClient(token);
 			web.chat.postMessage(channel, '', formattedJson, function(err, res){
@@ -95,9 +94,7 @@ function formatForSlack(json, response_type){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
-	formattedJson['type'] = "message";
-	formattedJson['subtype'] = "reply_broadcast";
-	//formattedJson['response_type'] = response_type || 'in_channel';
+	formattedJson['reply_broadcast'] = "false";
 	if(json.constructor === Array){
 		json.forEach(function(element){
 			var attachment = processElement(element);
