@@ -45,7 +45,7 @@ app.post('/stock', function(req, res){
 	var channel = req.body.event.channel;
 	var ts = req.body.event.thread_ts;
 	if(dhicock){
-		console.log('body:'+req.body.event);
+		console.log('body:'+JSON.stringify(req.body.event));
 	}
 	var symbols = [];
 	stockArr.forEach(function(element) {
