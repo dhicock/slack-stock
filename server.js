@@ -99,7 +99,7 @@ function processElement(element){
 	var compName = element.Name;
 	var dayOpen = element.Open;
 
-	var stockUrl = imgUrl + element.t;
+	var stockUrl = imgUrl + ticker;
 
 	if(changePerc >= 0){
 		attachment['color'] = 'good';
