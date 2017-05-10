@@ -74,6 +74,9 @@ app.post('/stock', function(req, res){
 			var formattedJson = formatForSlack(json.query.results.quote);
 			formattedJson['channel']=channel;
 			formattedJson['thread_ts']=ts;
+			if(dhicock){
+				console.log('ts:'+ts);
+			}
 			//console.log(formattedJson);
 			var web = new SlackClient(token);
 			web.chat.postMessage(channel, '', formattedJson, function(err, res){
