@@ -49,6 +49,9 @@ app.post('/stock', function(req, res){
 		symbols.push(element.replace('$', ''));
 	});
 	var tickers = symbols.join(',');
+	if(dhicock){
+		console.log(tickers);
+	}
 	var url = getApiUrl(tickers);
 	request(url, function(error, response, body){
 		if(error){
