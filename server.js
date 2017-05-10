@@ -48,7 +48,7 @@ app.post('/stock', function(req, res){
 	stockArr.forEach(function(element) {
 		var elem = element.replace(/\$+/, '');
 		if(dhicock){
-			console.log('element: '+ elem);
+			console.log('element: '+ element + ">" + elem);
 		}
 		symbols.push(elem);
 	});
