@@ -43,21 +43,21 @@ app.post('/stock', function(req, res){
 		return;
 	}
 	var channel = req.body.event.channel;
-	var ts = req.body.event.thread_ts;
+	var ts = req.body.event.ts;
 	if(dhicock){
-		console.log('body:'+JSON.stringify(req.body.event));
+		//console.log('body:'+JSON.stringify(req.body.event));
 	}
 	var symbols = [];
 	stockArr.forEach(function(element) {
 		var elem = element.replace(/\$+/, '');
 		if(dhicock){
-			console.log('element: '+ element + ">" + elem);
+			//console.log('element: '+ element + ">" + elem);
 		}
 		symbols.push(elem);
 	});
 	var tickers = symbols.join(',');
 	if(dhicock){
-		console.log(tickers);
+		//console.log(tickers);
 	}
 	var url = getApiUrl(tickers);
 	request(url, function(error, response, body){
@@ -96,7 +96,6 @@ app.post('/stock', function(req, res){
 })
 
 function formatForSlack(json, response_type){
-	console.log(JSON.stringify(json));
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
