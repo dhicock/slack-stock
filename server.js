@@ -78,6 +78,9 @@ function formatForSlack(json, response_type){
 	formattedJson['type'] = "message";
 	formattedJson['subtype'] = "reply_broadcast";
 	//formattedJson['response_type'] = response_type || 'in_channel';
+	if(typeof json !== 'object'){
+		json = JSON.parse(json);
+	}
 	json.forEach(function(element){
 		var attachment = {};
 		var change = element.Change;
