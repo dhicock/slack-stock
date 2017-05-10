@@ -27,12 +27,18 @@ app.post('/stock', function(req, res){
 	}
 	if(!text || text.len == 0){
 		//console.log('no text found');
+		if(dhicock){
+			console.log('no text');
+		}
 		res.end();
 		return;
 	}
 	var stockArr = text.match(regexPattern);
 	if(!stockArr || stockArr.length == 0){
 		//console.log('no stocks found');
+		if(dhicock){
+			console.log('no stocks');
+		}
 		res.end();
 		return;
 	}
@@ -51,7 +57,9 @@ app.post('/stock', function(req, res){
 			return;
 		}
 		if(response){
-			//console.log(response.body);
+			if(dhicock){
+				console.log(response.body);
+			}
 			var json = JSON.parse(response.body);
 			if(!json || !json.query || !json.query.results || !json.query.results.quote){
 				return;
