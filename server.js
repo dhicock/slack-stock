@@ -33,6 +33,7 @@ app.post('/stock', function(req, res){
 		return;
 	}
 	var channel = req.body.event.channel;
+	var ts = req.body.event.thread_ts;
 	var symbols = [];
 	stockArr.forEach(function(element) {
 		symbols.push(element.substring(1));
@@ -50,6 +51,7 @@ app.post('/stock', function(req, res){
 			var json = JSON.parse(response.body.replace('//', ''));
 			var formattedJson = formatForSlack(json);
 			formattedJson['channel']=channel;
+			formattedJson['thread_ts']=thread_ts;
 			//console.log(formattedJson);
 			var web = new SlackClient(token);
 			web.chat.postMessage(channel, '', formattedJson, function(err, res){
@@ -68,8 +70,7 @@ function formatForSlack(json, response_type){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
-	formattedJson['response_type'] = response_type || 'in_channel';
-	formattedJson['footer'] = 'Data from Google Finance';
+	//formattedJson['response_type'] = response_type || 'in_channel';
 	json.forEach(function(element){
 		var attachment = {};
 		var change = element.c;
@@ -110,6 +111,7 @@ function formatForSlack(json, response_type){
 				"short": true
 			}
 		];
+		attachment['footer'] = 'Data from Google Finance';
 		if(afterHoursPrice){
 			attachment['fields'].push({
 				"title": "After Hours Price",
