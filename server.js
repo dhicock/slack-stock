@@ -78,51 +78,61 @@ function formatForSlack(json, response_type){
 	formattedJson['type'] = "message";
 	formattedJson['subtype'] = "reply_broadcast";
 	//formattedJson['response_type'] = response_type || 'in_channel';
-	json.forEach(function(element){
-		var attachment = {};
-		var change = element.Change;
-		var changePerc = element.PercentChange;
-		var price = element.LastTradePriceOnly;
-		var ticker = element.symbol;
-		var compName = element.Name;
-		var dayOpen = element.Open;
-
-		var stockUrl = imgUrl + element.t;
-
-		if(changePerc >= 0){
-			attachment['color'] = 'good';
-		} else{
-			attachment['color'] = 'danger';
-		}
-		attachment['title'] = "Stock Information for " + compName;
-		attachment['title_link'] = linkUrl + ticker;
-		attachment['fields'] = [
-			{
-				"title": "Ticker",
-				"value": ticker,
-				"short": true
-			},
-			{
-				"title": "Current Price",
-				"value": price,
-				"short": true
-			},
-			{
-				"title": "Change",
-				"value": change,
-				"short": true
-			},
-			{
-				"title": "Percent Change",
-				"value": changePerc,
-				"short": true
-			}
-		];
-		attachment['footer'] = 'Data from Yahoo Finance';
-		attachment["image_url"] = stockUrl;
-		formattedJson.attachments.push(attachment);
-	});
+	if(element.constructor === Array){
+		json.forEach(function(element){
+			var attachment = processElement(element);
+			formattedJson.attachments.push(attachment);
+		});
+	}else{
+		var attachment = processElement(json);
+			formattedJson.attachments.push(attachment);
+	}
 	return formattedJson;
+}
+
+function processElement(element){
+	var attachment = {};
+	var change = element.Change;
+	var changePerc = element.PercentChange;
+	var price = element.LastTradePriceOnly;
+	var ticker = element.symbol;
+	var compName = element.Name;
+	var dayOpen = element.Open;
+
+	var stockUrl = imgUrl + element.t;
+
+	if(changePerc >= 0){
+		attachment['color'] = 'good';
+	} else{
+		attachment['color'] = 'danger';
+	}
+	attachment['title'] = "Stock Information for " + compName;
+	attachment['title_link'] = linkUrl + ticker;
+	attachment['fields'] = [
+		{
+			"title": "Ticker",
+			"value": ticker,
+			"short": true
+		},
+		{
+			"title": "Current Price",
+			"value": price,
+			"short": true
+		},
+		{
+			"title": "Change",
+			"value": change,
+			"short": true
+		},
+		{
+			"title": "Percent Change",
+			"value": changePerc,
+			"short": true
+		}
+	];
+	attachment['footer'] = 'Data from Yahoo Finance';
+	attachment["image_url"] = stockUrl;
+	return attachment;
 }
 
 function getApiUrl(symb){
