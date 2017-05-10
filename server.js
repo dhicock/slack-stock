@@ -71,7 +71,7 @@ app.post('/stock', function(req, res){
 })
 
 function formatForSlack(json, response_type){
-	console.log(typeof json);
+	console.log(JSON.stringify(json));
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
