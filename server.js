@@ -121,7 +121,7 @@ function processElement(element){
 	var compName = element.Name;
 	var dayOpen = element.Open;
 
-	var stockUrl = imgUrl + ticker;
+	var stockUrl = imgUrl + ticker.replace(/[\./-]/,'');
 
 	if(changePerc >= 0){
 		attachment['color'] = 'good';
