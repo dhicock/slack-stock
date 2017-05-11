@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
-var regexPattern = /\${2,}[A-Za-z\.]+[A-Za-z]+/g;
+var regexPattern = /\${2,}[A-Za-z\./-]+[A-Za-z]+/g;
 var linkUrl = 'https://finance.yahoo.com/quote/';
 var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
 
@@ -49,7 +49,7 @@ app.post('/stock', function(req, res){
 	}
 	var symbols = [];
 	stockArr.forEach(function(element) {
-		var elem = element.replace(/\$+/, '').replace(/\./, '/');
+		var elem = element.replace(/\$+/, '').replace(/[\./]/, '-');
 		if(dhicock){
 			//console.log('element: '+ element + ">" + elem);
 		}
