@@ -8,9 +8,19 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
+var yahoo_key = process.env.YAHOO_KEY;
+var yahoo_secret = process.env.YAHOO_SECRET;
 var regexPattern = /\${2,}[A-Za-z\./-]+[A-Za-z]+/g;
 var linkUrl = 'https://finance.yahoo.com/quote/';
 var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
+
+
+var yql = require('yql-auth').options({
+	OAuth: {
+		ID:yahoo_key,
+		Secret:yahoo_secret
+	}
+});
 
 app.post('/stock', function(req, res){
 	res.status(200);
@@ -59,39 +69,68 @@ app.post('/stock', function(req, res){
 	if(dhicock){
 		//console.log(tickers);
 	}
-	var url = getApiUrl(tickers);
-	request(url, function(error, response, body){
-		if(error){
-			console.log('error yahooapi=%s', error);
-			res.status(500).end();
+
+	yql.query(getquery(tickers)).then(function(response){
+		if(dhicock){
+			console.log(response);
+		}
+		var json = JSON.parse(response);
+		if(!json || !json.query || !json.query.results || !json.query.results.quote){
 			return;
 		}
-		if(response){
-			if(dhicock){
-				console.log(response.body);
-			}
-			var json = JSON.parse(response.body);
-			if(!json || !json.query || !json.query.results || !json.query.results.quote){
-				return;
-			}
-			var formattedJson = formatForSlack(json.query.results.quote);
-			formattedJson['channel']=channel;
-			formattedJson['thread_ts']=ts;
-			if(dhicock){
-				console.log('ts:'+ts);
-			}
-			//console.log(formattedJson);
-			var web = new SlackClient(token);
-			web.chat.postMessage(channel, '', formattedJson, function(err, res){
-				if(err){
-					console.log('Error: ' + err);
-					console.log('message: ' + JSON.stringify(formattedJson));
-				}else {
-					//console.log('Message Sent: ', res);
-				}
-			});
+		var formattedJson = formatForSlack(json.query.results.quote);
+		formattedJson['channel']=channel;
+		formattedJson['thread_ts']=ts;
+		if(dhicock){
+			console.log('ts:'+ts);
 		}
-	})
+		//console.log(formattedJson);
+		var web = new SlackClient(token);
+		web.chat.postMessage(channel, '', formattedJson, function(err, res){
+			if(err){
+				console.log('Error: ' + err);
+				console.log('message: ' + JSON.stringify(formattedJson));
+			}else {
+				//console.log('Message Sent: ', res);
+			}
+		});
+	}).catch(function(){
+
+	});
+
+	// var url = getApiUrl(tickers);
+	// request(url, function(error, response, body){
+	// 	if(error){
+	// 		console.log('error yahooapi=%s', error);
+	// 		res.status(500).end();
+	// 		return;
+	// 	}
+	// 	if(response){
+			// if(dhicock){
+			// 	console.log(response.body);
+			// }
+			// var json = JSON.parse(response.body);
+			// if(!json || !json.query || !json.query.results || !json.query.results.quote){
+			// 	return;
+			// }
+			// var formattedJson = formatForSlack(json.query.results.quote);
+			// formattedJson['channel']=channel;
+			// formattedJson['thread_ts']=ts;
+			// if(dhicock){
+			// 	console.log('ts:'+ts);
+			// }
+			// //console.log(formattedJson);
+			// var web = new SlackClient(token);
+			// web.chat.postMessage(channel, '', formattedJson, function(err, res){
+			// 	if(err){
+			// 		console.log('Error: ' + err);
+			// 		console.log('message: ' + JSON.stringify(formattedJson));
+			// 	}else {
+			// 		//console.log('Message Sent: ', res);
+			// 	}
+			// });
+	// 	}
+	// })
 	res.end();
 })
 
@@ -158,9 +197,14 @@ function processElement(element){
 }
 
 function getApiUrl(symb){
-	var query = 'select * from yahoo.finance.quotes where symbol in ("'+symb+'")';
+	var query = getQuery(symb);
 	var url = 'https://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent(query)+'&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 	return url;
+}
+
+function getQuery(symb){
+	var query = 'select * from yahoo.finance.quotes where symbol in ("'+symb+'")';
+	return query;
 }
 
 var server = app.listen(port, function() {
