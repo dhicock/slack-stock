@@ -70,7 +70,7 @@ app.post('/stock', function(req, res){
 		//console.log(tickers);
 	}
 
-	yql.query(getquery(tickers)).then(function(response){
+	yql.query(getQuery(tickers)).then(function(response){
 		if(dhicock){
 			console.log(response);
 		}
