@@ -14,11 +14,14 @@ var regexPattern = /\${2,}[A-Za-z\./-]+[A-Za-z]+/g;
 var linkUrl = 'https://finance.yahoo.com/quote/';
 var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
 
+console.log('key:'+yahoo_key);
+console.log('secret:'+yahoo_secret);
 
 var yql = require('yql-auth').options({
 	OAuth: {
 		ID:yahoo_key,
-		Secret:yahoo_secret
+		Secret:yahoo_secret,
+		format:'json'
 	}
 });
 
@@ -71,6 +74,7 @@ app.post('/stock', function(req, res){
 	}
 
 	yql.query(getQuery(tickers)).then(function(response){
+		//console.dir(response);
 		if(dhicock){
 			console.log(response);
 		}
@@ -94,8 +98,8 @@ app.post('/stock', function(req, res){
 				//console.log('Message Sent: ', res);
 			}
 		});
-	}).catch(function(){
-
+	}).catch(function(error){
+		console.error(error);
 	});
 
 	// var url = getApiUrl(tickers);
@@ -203,7 +207,7 @@ function getApiUrl(symb){
 }
 
 function getQuery(symb){
-	var query = 'select * from yahoo.finance.quotes where symbol in ("'+symb+'")';
+	var query = 'env \'store://datatables.org/alltableswithkeys\';select * from yahoo.finance.quotes where symbol in ("'+symb+'")';
 	return query;
 }
 
