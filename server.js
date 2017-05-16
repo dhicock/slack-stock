@@ -159,7 +159,7 @@ function processElement(element){
 
 function getApiUrl(symb){
 	var query = 'select * from yahoo.finance.quotes where symbol in ("'+symb+'")';
-	var url = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent(query)+'&env=store://datatables.org/alltableswithkeys&format=json&diagnostics=true';
+	var url = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent(query)+'&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&format=json&diagnostics=true';
 	return url;
 }
 
