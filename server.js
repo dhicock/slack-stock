@@ -123,10 +123,10 @@ function processElement(element){
 
 	var stockUrl = imgUrl + ticker.replace(/[\./-]/,'');
 
-	if(changePerc >= 0){
-		attachment['color'] = 'good';
-	} else{
+	if(changePerc <= 0){
 		attachment['color'] = 'danger';
+	} else{
+		attachment['color'] = 'good';
 	}
 	attachment['title'] = "Stock Information for " + compName;
 	attachment['title_link'] = linkUrl + ticker;
