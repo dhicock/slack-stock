@@ -45,9 +45,11 @@ app.post('/stock', function(req, res){
 	}
 	var channel = req.body.event.channel;
 	var ts = req.body.event.ts;
-
+	var loadingmsg = loading();
+	loadingmsg['channel']=channel;
+	loadingmsg['thread_ts']=ts;
 	var web = new SlackClient(token);
-	web.chat.postMessage(channel, 'Looking that up for you', loading(), function(err, res){
+	web.chat.postMessage(channel, 'Looking that up for you', loadingmsg, function(err, res){
 		if(err){
 			console.log('Error: ' + err);
 		}else {
