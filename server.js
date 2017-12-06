@@ -114,9 +114,9 @@ function processElement(element){
 	var metadata = element["Meta Data"];
 	var ticker = metadata[1];
 	var lastRefresh = metadata[2];
-	var close = stockdata[0][3];
-	var volume = stockdata[0][4];
-	var open = stockdata[0][0];
+	var close = stockdata[lastRefresh][3];
+	var volume = stockdata[lastRefresh][4];
+	var open = stockdata[lastRefresh][0];
 
 	var stockUrl = imgUrl + ticker.replace(/[\./-]/,'');
 
