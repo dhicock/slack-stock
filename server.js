@@ -189,8 +189,7 @@ function processElement(element){
 }
 
 function getApiUrl(symb){
-	var query = getQuery(symb);
-	var url = 'http://finance.google.com/finance/info?client=ig&q=NASDAQ%3A'+encodeURIComponent(query);
+	var url = 'http://finance.google.com/finance/info?client=ig&q=NASDAQ%3A'+encodeURIComponent(symb);
 	return url;
 }
 
