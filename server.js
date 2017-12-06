@@ -45,6 +45,17 @@ app.post('/stock', function(req, res){
 	}
 	var channel = req.body.event.channel;
 	var ts = req.body.event.ts;
+
+	var web = new SlackClient(token);
+	web.chat.postMessage(channel, '', loading(), function(err, res){
+		if(err){
+			console.log('Error: ' + err);
+			console.log('message: ' + JSON.stringify(formattedJson));
+		}else {
+			//console.log('Message Sent: ', res);
+		}
+	});
+
 	if(dhicock){
 		//console.log('body:'+JSON.stringify(req.body.event));
 	}
@@ -83,7 +94,7 @@ app.post('/stock', function(req, res){
 				console.log('ts:'+ts);
 			}
 			//console.log(formattedJson);
-			var web = new SlackClient(token);
+			//var web = new SlackClient(token);
 			web.chat.postMessage(channel, '', formattedJson, function(err, res){
 				if(err){
 					console.log('Error: ' + err);
@@ -96,6 +107,15 @@ app.post('/stock', function(req, res){
 	})
 	res.end();
 })
+
+function loading(){
+	var formattedJson = {};
+	formattedJson['as_user'] = false;
+	formattedJson['attachments'] = [];
+	formattedJson['reply_broadcast'] = "false";
+	formattedJson['text'] = 'Looking that up for you';
+	return formattedJson;
+}
 
 function formatForSlack(json, response_type){
 	var formattedJson = {};
@@ -113,7 +133,6 @@ function processElement(element){
 	var metadata = element["Meta Data"];
 	var ticker = metadata["2. Symbol"];
 	var lastRefresh = metadata["3. Last Refreshed"];
-	console.log(stockdata[lastRefresh]);
 	var close = stockdata[lastRefresh]["4. close"];
 	var volume = stockdata[lastRefresh]["5. volume"];
 	var open = stockdata[lastRefresh]["1. open"];
@@ -146,7 +165,6 @@ function processElement(element){
 	];
 	attachment['footer'] = 'Data from Alpha Vantage';
 	attachment["image_url"] = stockUrl;
-	console.log(attachment);
 	return attachment;
 }
 
