@@ -111,12 +111,12 @@ function processElement(element){
 	var attachment = {};
 	var stockdata = element["Time Series (1min)"];
 	var metadata = element["Meta Data"];
-	var ticker = metadata[1];
-	var lastRefresh = metadata[2];
+	var ticker = metadata["2. Symbol"];
+	var lastRefresh = metadata["3. Last Refreshed"];
 	console.log(stockdata[lastRefresh]);
-	var close = stockdata[lastRefresh][3];
-	var volume = stockdata[lastRefresh][4];
-	var open = stockdata[lastRefresh][0];
+	var close = stockdata[lastRefresh]["4. close"];
+	var volume = stockdata[lastRefresh]["5. volume"];
+	var open = stockdata[lastRefresh]["1. open"];
 
 	var stockUrl = imgUrl + ticker.replace(/[\./-]/,'');
 
