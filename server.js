@@ -70,7 +70,7 @@ app.post('/stock', function(req, res){
 		}
 		if(response){
 			if(dhicock){
-				console.log(response.body);
+				//console.log(response.body);
 			}
 			var json = JSON.parse(response.body);
 			if(!json || !json.query || !json.query.results || !json.query.results.quote){
@@ -155,6 +155,7 @@ function processElement(element){
 	];
 	attachment['footer'] = 'Data from Alpha Vantage';
 	attachment["image_url"] = stockUrl;
+	console.log(attachment);
 	return attachment;
 }
 
