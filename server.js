@@ -76,7 +76,7 @@ app.post('/stock', function(req, res){
 			if(!json){
 				return;
 			}
-			var formattedJson = formatForSlack(json.query.results.quote);
+			var formattedJson = formatForSlack(json);
 			formattedJson['channel']=channel;
 			formattedJson['thread_ts']=ts;
 			if(dhicock){
