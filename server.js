@@ -47,7 +47,7 @@ app.post('/stock', function(req, res){
 	var ts = req.body.event.ts;
 
 	var web = new SlackClient(token);
-	web.chat.postEphemeral(channel, 'Looking that up for you', function(err, res){
+	web.chat.postMessage(channel, 'Looking that up for you', loading(), function(err, res){
 		if(err){
 			console.log('Error: ' + err);
 		}else {
@@ -106,6 +106,14 @@ app.post('/stock', function(req, res){
 	})
 	res.end();
 })
+
+function loading(){
+	var formattedJson = {};
+	formattedJson['as_user'] = false;
+	formattedJson['reply_broadcast'] = "false";
+	formattedJson['text'] = "Looking that up for you";
+	return formattedJson;
+}
 
 function formatForSlack(json, response_type){
 	var formattedJson = {};
