@@ -115,7 +115,7 @@ function loading(){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['reply_broadcast'] = "false";
-	formattedJson['text'] = 'Looking that up for you';
+	formattedJson['text'] = "Looking that up for you";
 	return formattedJson;
 }
 
