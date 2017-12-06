@@ -50,7 +50,7 @@ app.post('/stock', function(req, res){
 	web.chat.postMessage(channel, '', loading(), function(err, res){
 		if(err){
 			console.log('Error: ' + err);
-			console.log('message: ' + JSON.stringify(formattedJson));
+			console.log('message: ' + JSON.stringify(loading()));
 		}else {
 			//console.log('Message Sent: ', res);
 		}
