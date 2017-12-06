@@ -160,7 +160,7 @@ function processElement(element){
 }
 
 function getApiUrl(symb){
-	var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+EncodeUrlComponent(symb)+'&interval=1min&apikey=BKGR63Q1T8ZE2YTF';
+	var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+encodeURIComponent(symb)+'&interval=1min&apikey=BKGR63Q1T8ZE2YTF';
 	return url;
 }
 
