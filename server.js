@@ -47,10 +47,13 @@ app.post('/stock', function(req, res){
 	var ts = req.body.event.ts;
 
 	var web = new SlackClient(token);
-	web.chat.postMessage(channel, '', loading(), function(err, res){
+	var loadingmsg = loading();
+	loadingmsg['channel']=channel;
+	loadingmsg['thread_ts']=ts;
+	web.chat.postMessage(channel, '', loadingmsg, function(err, res){
 		if(err){
 			console.log('Error: ' + err);
-			console.log('message: ' + JSON.stringify(loading()));
+			console.log('message: ' + JSON.stringify(loadingmsg));
 		}else {
 			//console.log('Message Sent: ', res);
 		}
@@ -111,7 +114,6 @@ app.post('/stock', function(req, res){
 function loading(){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
-	formattedJson['attachments'] = [];
 	formattedJson['reply_broadcast'] = "false";
 	formattedJson['text'] = 'Looking that up for you';
 	return formattedJson;
