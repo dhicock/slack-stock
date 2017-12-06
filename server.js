@@ -73,7 +73,7 @@ app.post('/stock', function(req, res){
 				//console.log(response.body);
 			}
 			var json = JSON.parse(response.body);
-			if(!json || !json.query || !json.query.results || !json.query.results.quote){
+			if(!json){
 				return;
 			}
 			var formattedJson = formatForSlack(json.query.results.quote);
