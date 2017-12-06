@@ -103,10 +103,8 @@ function formatForSlack(json, response_type){
 	formattedJson['attachments'] = [];
 	formattedJson['reply_broadcast'] = "false";
 	if(json.constructor === Array){
-		json.forEach(function(element){
-			var attachment = processElement(element);
-			formattedJson.attachments.push(attachment);
-		});
+		var attachment = processElement(json);
+		formattedJson.attachments.push(attachment);
 	}else{
 		var attachment = processElement(json);
 			formattedJson.attachments.push(attachment);
@@ -116,12 +114,13 @@ function formatForSlack(json, response_type){
 
 function processElement(element){
 	var attachment = {};
-	var change = element.Change;
-	var changePerc = element.PercentChange;
-	var price = element.LastTradePriceOnly;
-	var ticker = element.symbol;
-	var compName = element.Name;
-	var dayOpen = element.Open;
+	var stockdata = element["Time Series (1 min)"];
+	var metadata = element["Meta Data"];
+	var ticker = metadata[1];
+	var lastRefresh = metadata[2];
+	var close = stockdata[0][3];
+	var volume = stockdata[0][4];
+	var open = stockdata[0][0];
 
 	var stockUrl = imgUrl + ticker.replace(/[\./-]/,'');
 
@@ -130,7 +129,7 @@ function processElement(element){
 	} else{
 		attachment['color'] = 'good';
 	}
-	attachment['title'] = "Stock Information for " + compName;
+	attachment['title'] = "Stock Information for " + lastRefresh;
 	attachment['title_link'] = linkUrl + ticker;
 	attachment['fields'] = [
 		{
@@ -139,18 +138,18 @@ function processElement(element){
 			"short": true
 		},
 		{
-			"title": "Current Price",
-			"value": price,
+			"title": "Open",
+			"value": open,
 			"short": true
 		},
 		{
-			"title": "Change",
-			"value": change,
+			"title": "Close",
+			"value": close,
 			"short": true
 		},
 		{
-			"title": "Percent Change",
-			"value": changePerc,
+			"title": "Volume",
+			"value": volume,
 			"short": true
 		}
 	];
