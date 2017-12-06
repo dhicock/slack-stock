@@ -61,39 +61,10 @@ app.post('/stock', function(req, res){
 		console.log(tickers);
 	}
 
-	// yql.query(getQuery(tickers)).then(function(response){
-	// 	//console.dir(response);
-	// 	if(dhicock){
-	// 		console.log(response);
-	// 	}
-	// 	var json = JSON.parse(response);
-	// 	if(!json || !json.query || !json.query.results || !json.query.results.quote){
-	// 		return;
-	// 	}
-	// 	var formattedJson = formatForSlack(json.query.results.quote);
-	// 	formattedJson['channel']=channel;
-	// 	formattedJson['thread_ts']=ts;
-	// 	if(dhicock){
-	// 		console.log('ts:'+ts);
-	// 	}
-	// 	//console.log(formattedJson);
-	// 	var web = new SlackClient(token);
-	// 	web.chat.postMessage(channel, '', formattedJson, function(err, res){
-	// 		if(err){
-	// 			console.log('Error: ' + err);
-	// 			console.log('message: ' + JSON.stringify(formattedJson));
-	// 		}else {
-	// 			//console.log('Message Sent: ', res);
-	// 		}
-	// 	});
-	// }).catch(function(error){
-	// 	console.error(error);
-	// });
-
 	var url = getApiUrl(tickers);
 	request(url, function(error, response, body){
 		if(error){
-			console.log('error yahooapi=%s', error);
+			console.log('error=%s', error);
 			res.status(500).end();
 			return;
 		}
@@ -183,13 +154,13 @@ function processElement(element){
 			"short": true
 		}
 	];
-	attachment['footer'] = 'Data from Google Finance';
+	attachment['footer'] = 'Data from Alpha Vantage';
 	attachment["image_url"] = stockUrl;
 	return attachment;
 }
 
 function getApiUrl(symb){
-	var url = 'http://finance.google.com/finance/info?client=ig&q=NASDAQ%3A'+encodeURIComponent(symb);
+	var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+EncodeUrlComponent(symb)+'&interval=1min&apikey=BKGR63Q1T8ZE2YTF';
 	return url;
 }
 
