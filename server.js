@@ -102,20 +102,17 @@ function formatForSlack(json, response_type){
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
 	formattedJson['reply_broadcast'] = "false";
-	if(json.constructor === Array){
-		var attachment = processElement(json);
-		formattedJson.attachments.push(attachment);
-	}else{
-		var attachment = processElement(json);
-			formattedJson.attachments.push(attachment);
-	}
+	var attachment = processElement(json);
+	formattedJson.attachments.push(attachment);
 	return formattedJson;
 }
 
 function processElement(element){
 	var attachment = {};
 	var stockdata = element["Time Series (1 min)"];
+	console.log(stockdata);
 	var metadata = element["Meta Data"];
+	console.log(metadata);
 	var ticker = metadata[1];
 	var lastRefresh = metadata[2];
 	var close = stockdata[0][3];
