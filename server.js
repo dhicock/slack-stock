@@ -110,9 +110,8 @@ function formatForSlack(json, response_type){
 function processElement(element){
 	var attachment = {};
 	var stockdata = element["Time Series (1min)"];
-	console.log(stockdata);
+	console.log(stockdata[0]);
 	var metadata = element["Meta Data"];
-	console.log(metadata);
 	var ticker = metadata[1];
 	var lastRefresh = metadata[2];
 	var close = stockdata[0][3];
