@@ -47,7 +47,7 @@ app.post('/stock', function(req, res){
 	var ts = req.body.event.ts;
 
 	var web = new SlackClient(token);
-	web.chat.postMessage(channel, 'Looking that up for you', function(err, res){
+	web.chat.postEphemeral(channel, 'Looking that up for you', function(err, res){
 		if(err){
 			console.log('Error: ' + err);
 		}else {
