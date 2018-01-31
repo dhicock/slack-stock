@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
-var regexPattern = /\${2,}[A-Za-z\./-]+[A-Za-z]+/g;
+var regexPattern = /\${2,}[A-Za-z\./-]+[A-Za-z]*/g;
 var linkUrl = 'https://finance.google.com/finance?q=';
 var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
 
