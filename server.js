@@ -84,11 +84,41 @@ app.post('/stock', function(req, res){
 			if(dhicock){
 				//console.log(response.body);
 			}
+			try{
 			var json = JSON.parse(response.body);
+			}catch(e){
+				console.log(e);
+				var problemmsg = problemMsg();
+				problemmsg['channel']=channel;
+				problemmsg['thread_ts']=ts;
+				web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
+					if(err){
+						console.log('Error: ' + err);
+					}else {
+						//console.log('Message Sent: ', res);
+					}
+				});
+				return;
+			}
 			if(!json){
 				return;
 			}
-			var formattedJson = formatForSlack(json);
+			var formattedJson;
+			try{
+			formattedJson = formatForSlack(json);
+			}catch(e){
+				console.log(e);
+				var problemmsg = problemMsg();
+				problemmsg['channel']=channel;
+				problemmsg['thread_ts']=ts;
+				web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
+					if(err){
+						console.log('Error: ' + err);
+					}else {
+						//console.log('Message Sent: ', res);
+					}
+				});
+			}
 			formattedJson['channel']=channel;
 			formattedJson['thread_ts']=ts;
 			if(dhicock){
@@ -116,6 +146,16 @@ function loading(){
 	formattedJson['text'] = "Looking that up for you";
 	return formattedJson;
 }
+
+function problemMsg(){
+	var formattedJson = {};
+	formattedJson['as_user'] = false;
+	formattedJson['reply_broadcast'] = "false";
+	formattedJson['text'] = "There was a problem. Please try again later.";
+	return formattedJson;
+}
+
+
 
 function formatForSlack(json, response_type){
 	var formattedJson = {};
