@@ -25,6 +25,7 @@ app.post('/stock', function(req, res){
 	var text = req.body.event.text;
 	if(dhicock){
 		console.log(text);
+		console.log(json.stringify(req.body));
 	}
 	if(!text || text.len == 0){
 		//console.log('no text found');
