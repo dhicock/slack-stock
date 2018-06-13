@@ -83,7 +83,7 @@ app.post('/stock', function(req, res){
 		}
 		if(response){
 			if(dhicock){
-				//console.log(response.body);
+				console.log(response.body);
 			}
 			try{
 			var json = JSON.parse(response.body);
