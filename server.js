@@ -47,17 +47,7 @@ app.post('/stock', function(req, res){
 	}
 	var channel = req.body.event.channel;
 	var ts = req.body.event.ts;
-	var loadingmsg = loading();
-	loadingmsg['channel']=channel;
-	loadingmsg['thread_ts']=ts;
 	var web = new SlackClient(token);
-	web.chat.postMessage(channel, 'Looking that up for you', loadingmsg, function(err, res){
-		if(err){
-			console.log('Error: ' + err);
-		}else {
-			//console.log('Message Sent: ', res);
-		}
-	});
 
 	if(dhicock){
 		//console.log('body:'+JSON.stringify(req.body.event));
@@ -74,8 +64,8 @@ app.post('/stock', function(req, res){
 	symbols.forEach(async function(element){
 		var price = await getStockPrice(element);
 		var compData = await getCompanyData(element);
-		console.log('Company data in forEach is: ' + JSON.stringify(compData));
-		formattedJson = formatForSlack(price, compData);
+		var keyStats = await getKeyStats(elemenet);
+		formattedJson = formatForSlack(price, compData, keyStats);
 		formattedJson['channel']=channel;
 		formattedJson['thread_ts']=ts;
 		if(dhicock){
@@ -95,35 +85,17 @@ app.post('/stock', function(req, res){
 	res.end();
 })
 
-function loading(){
-	var formattedJson = {};
-	formattedJson['as_user'] = false;
-	formattedJson['reply_broadcast'] = "false";
-	formattedJson['text'] = "Looking that up for you";
-	return formattedJson;
-}
-
-function problemMsg(){
-	var formattedJson = {};
-	formattedJson['as_user'] = false;
-	formattedJson['reply_broadcast'] = "false";
-	formattedJson['text'] = "There was a problem. Please try again later.";
-	return formattedJson;
-}
-
-function formatForSlack(price, compData){
-	console.log('Company data in formatForSlack is: ' + JSON.stringify(compData));
+function formatForSlack(price, compData, keyStats){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
 	formattedJson['reply_broadcast'] = "false";
-	var attachment = processElement(price, compData);
+	var attachment = processElement(price, compData, keyStats);
 	formattedJson.attachments.push(attachment);
 	return formattedJson;
 }
 
-function processElement(price, compData){
-	console.log('Company data in ProcessElement is: ' + JSON.stringify(compData));
+function processElement(price, compData, keyStats){
 	var attachment = {};
 	var stockUrl = imgUrl + compData.symbol.replace(/[\./-]/,'');
 
@@ -143,12 +115,27 @@ function processElement(price, compData){
 		{
 			"title": "Description",
 			"value": compData.description,
-			"short": true
+			"short": false
 		},
 		{
 			"title": "Stock Price",
 			"value": price,
 			"short": true
+		},
+		{
+			"title": "Next Earnings Date",
+			"value": keyStats.nextEarningsDate,
+			"short": true
+		},
+		{
+			"title": "5 day change",
+			"value": (keyStats.day5ChangePercent * 100).toFixed(2) + '%',
+			"short":true
+		},
+		{
+			"title": "Year To Date change",
+			"value": (keyStats.ytdChangePercent * 100).toFixed(2) + '%',
+			"short":true
 		}
 	];
 	attachment['footer'] = 'Data from IEX Cloud';
@@ -158,7 +145,7 @@ function processElement(price, compData){
 
 async function getStockPrice(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price';
-	console.log(url);
+	//console.log(url);
 	var options = {
 		uri: url,
 		qs: {
@@ -169,7 +156,7 @@ async function getStockPrice(symb){
 	let data = undefined;
 	await rp(options)
 		.then(function (price) {
-			console.log('Price is: ' + price);
+			//console.log('Price is: ' + price);
 			data = price;
 		})
 		.catch(function (err) {
@@ -180,6 +167,28 @@ async function getStockPrice(symb){
 
 async function getCompanyData(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company';
+	//console.log(url);
+	var options = {
+		uri: url,
+		qs: {
+			token: iexKey
+		},
+		json: true
+	}
+	let data = undefined;
+	await rp(options)
+		.then(function (compData) {
+			//console.log('Company data is: ' + JSON.stringify(compData));
+			data = compData;
+		})
+		.catch(function (err) {
+			console.log('There was a problem: ' + err)
+		});
+	return data;
+}
+
+async function getKeyStats(symb){
+	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/stats';
 	console.log(url);
 	var options = {
 		uri: url,
@@ -191,7 +200,7 @@ async function getCompanyData(symb){
 	let data = undefined;
 	await rp(options)
 		.then(function (compData) {
-			console.log('Company data is: ' + JSON.stringify(compData));
+			//console.log('Company stats are: ' + JSON.stringify(compData));
 			data = compData;
 		})
 		.catch(function (err) {
