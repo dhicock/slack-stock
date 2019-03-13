@@ -163,7 +163,7 @@ function getStockPrice(symb){
 		},
 		json: false
 	}
-	rp(options)
+	await rp(options)
 		.then(function (price) {
 			console.log('Price is: ' + price);
 			return price;
@@ -183,7 +183,7 @@ function getCompanyData(symb){
 		},
 		json: true
 	}
-	rp(options)
+	await rp(options)
 		.then(function (compData) {
 			console.log('Copmany data is: ' + compData);
 			return compData;
