@@ -66,7 +66,7 @@ app.post('/stock', function(req, res){
 	stockArr.forEach(function(element) {
 		var elem = element.replace(/\$+/, '').replace(/[\./]/, '-');
 		if(dhicock){
-			//console.log('element: '+ element + ">" + elem);
+			console.log('element: '+ element + ">" + elem);
 		}
 		symbols.push(elem);
 	});
@@ -155,6 +155,7 @@ function processElement(price, compData){
 
 function getStockPrice(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price?token='+iexKey;
+	console.log(url);
 	request(url, function(error, response){
 		if(error){
 			console.log('error=%s', error);
@@ -169,6 +170,7 @@ function getStockPrice(symb){
 
 function getCompanyData(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company?token='+iexKey;
+	console.log(url);
 	request(url, function(error, response){
 		if(error){
 			console.log('error=%s', error);
