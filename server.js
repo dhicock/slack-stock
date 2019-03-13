@@ -72,8 +72,8 @@ app.post('/stock', function(req, res){
 	});
 
 	symbols.forEach(function(element){
-		var price = getStockPrice(element);
-		var compData = getCompanyData(element);
+		var price = await getStockPrice(element);
+		var compData = await getCompanyData(element);
 		formattedJson = formatForSlack(price, compData);
 		formattedJson['channel']=channel;
 		formattedJson['thread_ts']=ts;
@@ -153,7 +153,7 @@ function processElement(price, compData){
 	return attachment;
 }
 
-function getStockPrice(symb){
+async function getStockPrice(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price';
 	console.log(url);
 	var options = {
@@ -173,7 +173,7 @@ function getStockPrice(symb){
 		});
 }
 
-function getCompanyData(symb){
+async function getCompanyData(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company';
 	console.log(url);
 	var options = {
