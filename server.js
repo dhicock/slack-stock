@@ -156,14 +156,14 @@ function processElement(price, compData){
 function getStockPrice(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price?token='+iexKey;
 	console.log(url);
-	request(url, function(error, response){
+	request(url, function(error, response, body){
 		if(error){
 			console.log('error=%s', error);
 			return;
 		}
-		if(response){
-			console.log('Price received: '+response)
-			return response;
+		if(body){
+			console.log('Price received: '+body)
+			return body;
 		}
 	})
 }
@@ -171,14 +171,14 @@ function getStockPrice(symb){
 function getCompanyData(symb){
 	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company?token='+iexKey;
 	console.log(url);
-	request(url, function(error, response){
+	request(url, function(error, response, body){
 		if(error){
 			console.log('error=%s', error);
 			return;
 		}
-		if(response){
-			console.log('Company data received: ' + response)
-			var json = JSON.parse(response);
+		if(body){
+			console.log('Company data received: ' + body)
+			var json = JSON.parse(body);
 			return json;
 		}
 	})
