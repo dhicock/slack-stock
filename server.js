@@ -8,6 +8,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8081;
 var token = process.env.SLACK_API_TOKEN;
+var iexKey = process.env.IEX_PUBLISH_TOKEN;
 var regexPattern = /\${2,}[A-Za-z\./-]+[A-Za-z]*/g;
 var linkUrl = 'https://finance.google.com/finance?q=';
 var imgUrl = 'http://markets.money.cnn.com/services/api/chart/snapshot_chart_api.asp?symb=';
@@ -69,74 +70,77 @@ app.post('/stock', function(req, res){
 		}
 		symbols.push(elem);
 	});
-	var tickers = symbols.join(',');
 	if(dhicock){
 		console.log(tickers);
 	}
 
-	var url = getApiUrl(tickers);
-	request(url, function(error, response, body){
-		if(error){
-			console.log('error=%s', error);
-			res.status(500).end();
-			return;
-		}
-		if(response){
-			if(dhicock){
-				console.log(response.body);
-			}
-			try{
-			var json = JSON.parse(response.body);
-			}catch(e){
-				console.log(e);
-				var problemmsg = problemMsg();
-				problemmsg['channel']=channel;
-				problemmsg['thread_ts']=ts;
-				web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
-					if(err){
-						console.log('Error: ' + err);
-					}else {
-						//console.log('Message Sent: ', res);
-					}
-				});
+	symbols.forEach(function(element){
+		var price = getStockPrice(element);
+		var compData = getCompanyData(element);
+		var url = getApiUrl(element);
+		request(url, function(error, response, body){
+			if(error){
+				console.log('error=%s', error);
+				res.status(500).end();
 				return;
 			}
-			if(!json){
-				return;
-			}
-			var formattedJson;
-			try{
-			formattedJson = formatForSlack(json);
-			}catch(e){
-				console.log(e);
-				var problemmsg = problemMsg();
-				problemmsg['channel']=channel;
-				problemmsg['thread_ts']=ts;
-				web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
-					if(err){
-						console.log('Error: ' + err);
-					}else {
-						//console.log('Message Sent: ', res);
-					}
-				});
-			}
-			formattedJson['channel']=channel;
-			formattedJson['thread_ts']=ts;
-			if(dhicock){
-				console.log('ts:'+ts);
-			}
-			//console.log(formattedJson);
-			//var web = new SlackClient(token);
-			web.chat.postMessage(channel, '', formattedJson, function(err, res){
-				if(err){
-					console.log('Error: ' + err);
-					console.log('message: ' + JSON.stringify(formattedJson));
-				}else {
-					//console.log('Message Sent: ', res);
+			if(response){
+				if(dhicock){
+					console.log(response.body);
 				}
-			});
-		}
-	})
+				try{
+				var json = JSON.parse(response.body);
+				}catch(e){
+					console.log(e);
+					var problemmsg = problemMsg();
+					problemmsg['channel']=channel;
+					problemmsg['thread_ts']=ts;
+					web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
+						if(err){
+							console.log('Error: ' + err);
+						}else {
+							//console.log('Message Sent: ', res);
+						}
+					});
+					return;
+				}
+				if(!json){
+					return;
+				}
+				var formattedJson;
+				try{
+				formattedJson = formatForSlack(price, compData);
+				}catch(e){
+					console.log(e);
+					var problemmsg = problemMsg();
+					problemmsg['channel']=channel;
+					problemmsg['thread_ts']=ts;
+					web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
+						if(err){
+							console.log('Error: ' + err);
+						}else {
+							//console.log('Message Sent: ', res);
+						}
+					});
+				}
+				formattedJson['channel']=channel;
+				formattedJson['thread_ts']=ts;
+				if(dhicock){
+					console.log('ts:'+ts);
+				}
+				//console.log(formattedJson);
+				//var web = new SlackClient(token);
+				web.chat.postMessage(channel, '', formattedJson, function(err, res){
+					if(err){
+						console.log('Error: ' + err);
+						console.log('message: ' + JSON.stringify(formattedJson));
+					}else {
+						//console.log('Message Sent: ', res);
+					}
+				});
+			}
+		})
+	});
 	res.end();
 })
 
@@ -156,51 +160,41 @@ function problemMsg(){
 	return formattedJson;
 }
 
-
-
-function formatForSlack(json, response_type){
+function formatForSlack(price, compData){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
 	formattedJson['reply_broadcast'] = "false";
-	var attachment = processElement(json);
+	var attachment = processElement(price, compData);
 	formattedJson.attachments.push(attachment);
 	return formattedJson;
 }
 
-function processElement(element){
+function processElement(price, compData){
 	var attachment = {};
-	var stockdata = element["Time Series (1min)"];
-	var metadata = element["Meta Data"];
-	var ticker = metadata["2. Symbol"];
-	var lastRefresh = metadata["3. Last Refreshed"];
-	var close = stockdata[lastRefresh]["4. close"];
-	var volume = stockdata[lastRefresh]["5. volume"];
-	var open = stockdata[lastRefresh]["1. open"];
+	var stockUrl = imgUrl + compData.symbol.replace(/[\./-]/,'');
 
-	var stockUrl = imgUrl + ticker.replace(/[\./-]/,'');
-
-	attachment['title'] = "Stock Information for " + lastRefresh;
-	attachment['title_link'] = linkUrl + ticker;
+	attachment['title'] = "Stock Information for " + compData.companyName;
+	attachment['title_link'] = linkUrl + compData.symbol;
 	attachment['fields'] = [
 		{
-			"title": "Ticker",
-			"value": ticker,
+			"title": "Symbol",
+			"value": compData.symbol,
 			"short": true
 		},
 		{
-			"title": "Open",
-			"value": open,
+			"title": "Company Name",
+			"value": compData.companyName,
 			"short": true
 		},
 		{
-			"title": "Close",
-			"value": close,
+			"title": "Description",
+			"value": compData.description,
 			"short": true
 		},
 		{
-			"title": "Volume",
-			"value": volume,
+			"title": "Stock Price",
+			"value": price,
 			"short": true
 		}
 	];
@@ -209,9 +203,31 @@ function processElement(element){
 	return attachment;
 }
 
-function getApiUrl(symb){
-	var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+encodeURIComponent(symb)+'&interval=1min&apikey=BKGR63Q1T8ZE2YTF';
-	return url;
+function getStockPrice(symb){
+	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price?token='+iexKey;
+	request(url, function(error, response){
+		if(error){
+			console.log('error=%s', error);
+			return;
+		}
+		if(response){
+			return response;
+		}
+	})
+}
+
+function getCompanyData(symb){
+	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company?token='+iexKey;
+	request(url, function(error, response){
+		if(error){
+			console.log('error=%s', error);
+			return;
+		}
+		if(response){
+			var json = JSON.parse(response);
+			return json;
+		}
+	})
 }
 
 var server = app.listen(port, function() {
