@@ -74,6 +74,7 @@ app.post('/stock', function(req, res){
 	symbols.forEach(async function(element){
 		var price = await getStockPrice(element);
 		var compData = await getCompanyData(element);
+		console.log('Company data in forEach is: ' + JSON.stringify(compData));
 		formattedJson = formatForSlack(price, compData);
 		formattedJson['channel']=channel;
 		formattedJson['thread_ts']=ts;
@@ -111,6 +112,7 @@ function problemMsg(){
 }
 
 function formatForSlack(price, compData){
+	console.log('Company data in formatForSlack is: ' + JSON.stringify(compData));
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
@@ -121,6 +123,7 @@ function formatForSlack(price, compData){
 }
 
 function processElement(price, compData){
+	console.log('Company data in ProcessElement is: ' + JSON.stringify(compData));
 	var attachment = {};
 	var stockUrl = imgUrl + compData.symbol.replace(/[\./-]/,'');
 
@@ -185,7 +188,7 @@ async function getCompanyData(symb){
 	}
 	await rp(options)
 		.then(function (compData) {
-			console.log('Copmany data is: ' + JSON.stringify(compData));
+			console.log('Company data is: ' + JSON.stringify(compData));
 			return compData;
 		})
 		.catch(function (err) {
