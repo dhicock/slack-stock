@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var request = require('request');
+var rp = require('request-promise');
 var bodyParser = require('body-parser');
 var SlackClient = require('@slack/client').WebClient;
 app.use(bodyParser.urlencoded({extended: false}));
@@ -153,29 +153,44 @@ function processElement(price, compData){
 	return attachment;
 }
 
-async function getStockPrice(symb){
-	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price?token='+iexKey;
+function getStockPrice(symb){
+	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price';
 	console.log(url);
-	return await request(url);
+	var options = {
+		uri: url,
+		qs: {
+			token: iexKey
+		},
+		json: false
+	}
+	rp(options)
+		.then(function (price) {
+			console.log('Price is: ' + price);
+			return price;
+		})
+		.catch(function (err) {
+			console.log('There was a problem: ' + err)
+		});
 }
 
-async function getCompanyData(symb){
-	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company?token='+iexKey;
+function getCompanyData(symb){
+	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company';
 	console.log(url);
-	let compData = await request(url);
-	return JSON.parse(compData);
-}
-
-function request(url){
-	return new Promise(function (resolve, reject){
-		request(url, function (error, res, body) {
-			if (!error && res.statusCode == 200) {
-			  resolve(body);
-			} else {
-			  reject(error);
-			}
-		  });
-	});
+	var options = {
+		uri: url,
+		qs: {
+			token: iexKey
+		},
+		json: true
+	}
+	rp(options)
+		.then(function (compData) {
+			console.log('Copmany data is: ' + compData);
+			return compData;
+		})
+		.catch(function (err) {
+			console.log('There was a problem: ' + err)
+		});
 }
 
 var server = app.listen(port, function() {
