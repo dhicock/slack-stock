@@ -148,7 +148,7 @@ function processElement(price, compData){
 			"short": true
 		}
 	];
-	attachment['footer'] = 'Data from Alpha Vantage';
+	attachment['footer'] = 'Data from IEX Cloud';
 	attachment["image_url"] = stockUrl;
 	return attachment;
 }
@@ -161,6 +161,7 @@ function getStockPrice(symb){
 			return;
 		}
 		if(response){
+			console.log('Price received: '+response)
 			return response;
 		}
 	})
@@ -174,6 +175,7 @@ function getCompanyData(symb){
 			return;
 		}
 		if(response){
+			console.log('Company data received: ' + response)
 			var json = JSON.parse(response);
 			return json;
 		}
