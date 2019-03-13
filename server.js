@@ -71,7 +71,7 @@ app.post('/stock', function(req, res){
 		symbols.push(elem);
 	});
 
-	symbols.forEach(function(element){
+	symbols.forEach(async function(element){
 		var price = await getStockPrice(element);
 		var compData = await getCompanyData(element);
 		formattedJson = formatForSlack(price, compData);
