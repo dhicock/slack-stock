@@ -185,7 +185,7 @@ async function getCompanyData(symb){
 	}
 	await rp(options)
 		.then(function (compData) {
-			console.log('Copmany data is: ' + compData);
+			console.log('Copmany data is: ' + JSON.stringify(compData));
 			return compData;
 		})
 		.catch(function (err) {
