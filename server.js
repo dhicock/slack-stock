@@ -166,14 +166,16 @@ async function getStockPrice(symb){
 		},
 		json: false
 	}
+	let data = undefined;
 	await rp(options)
 		.then(function (price) {
 			console.log('Price is: ' + price);
-			return price;
+			data = price;
 		})
 		.catch(function (err) {
 			console.log('There was a problem: ' + err)
 		});
+	return data;
 }
 
 async function getCompanyData(symb){
@@ -186,14 +188,16 @@ async function getCompanyData(symb){
 		},
 		json: true
 	}
+	let data = undefined;
 	await rp(options)
 		.then(function (compData) {
 			console.log('Company data is: ' + JSON.stringify(compData));
-			return compData;
+			data = compData;
 		})
 		.catch(function (err) {
 			console.log('There was a problem: ' + err)
 		});
+	return data;
 }
 
 var server = app.listen(port, function() {
