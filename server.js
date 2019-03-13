@@ -70,76 +70,26 @@ app.post('/stock', function(req, res){
 		}
 		symbols.push(elem);
 	});
-	if(dhicock){
-		console.log(tickers);
-	}
 
 	symbols.forEach(function(element){
 		var price = getStockPrice(element);
 		var compData = getCompanyData(element);
-		var url = getApiUrl(element);
-		request(url, function(error, response, body){
-			if(error){
-				console.log('error=%s', error);
-				res.status(500).end();
-				return;
+		formattedJson = formatForSlack(price, compData);
+		formattedJson['channel']=channel;
+		formattedJson['thread_ts']=ts;
+		if(dhicock){
+			console.log('ts:'+ts);
+		}
+		//console.log(formattedJson);
+		//var web = new SlackClient(token);
+		web.chat.postMessage(channel, '', formattedJson, function(err, res){
+			if(err){
+				console.log('Error: ' + err);
+				console.log('message: ' + JSON.stringify(formattedJson));
+			}else {
+				//console.log('Message Sent: ', res);
 			}
-			if(response){
-				if(dhicock){
-					console.log(response.body);
-				}
-				try{
-				var json = JSON.parse(response.body);
-				}catch(e){
-					console.log(e);
-					var problemmsg = problemMsg();
-					problemmsg['channel']=channel;
-					problemmsg['thread_ts']=ts;
-					web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
-						if(err){
-							console.log('Error: ' + err);
-						}else {
-							//console.log('Message Sent: ', res);
-						}
-					});
-					return;
-				}
-				if(!json){
-					return;
-				}
-				var formattedJson;
-				try{
-				formattedJson = formatForSlack(price, compData);
-				}catch(e){
-					console.log(e);
-					var problemmsg = problemMsg();
-					problemmsg['channel']=channel;
-					problemmsg['thread_ts']=ts;
-					web.chat.postMessage(channel, 'There was a problem', problemmsg, function(err, res){
-						if(err){
-							console.log('Error: ' + err);
-						}else {
-							//console.log('Message Sent: ', res);
-						}
-					});
-				}
-				formattedJson['channel']=channel;
-				formattedJson['thread_ts']=ts;
-				if(dhicock){
-					console.log('ts:'+ts);
-				}
-				//console.log(formattedJson);
-				//var web = new SlackClient(token);
-				web.chat.postMessage(channel, '', formattedJson, function(err, res){
-					if(err){
-						console.log('Error: ' + err);
-						console.log('message: ' + JSON.stringify(formattedJson));
-					}else {
-						//console.log('Message Sent: ', res);
-					}
-				});
-			}
-		})
+		});
 	});
 	res.end();
 })
