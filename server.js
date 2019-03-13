@@ -64,7 +64,7 @@ app.post('/stock', function(req, res){
 	symbols.forEach(async function(element){
 		var price = await getStockPrice(element);
 		var compData = await getCompanyData(element);
-		var keyStats = await getKeyStats(elemenet);
+		var keyStats = await getKeyStats(element);
 		formattedJson = formatForSlack(price, compData, keyStats);
 		formattedJson['channel']=channel;
 		formattedJson['thread_ts']=ts;
