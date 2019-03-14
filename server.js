@@ -144,7 +144,7 @@ function processElement(price, compData, keyStats){
 }
 
 async function getStockPrice(symb){
-	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/price';
+	var url = 'https://cloud.iexapis.com/beta/stock/'+encodeURIComponent(symb)+'/price';
 	//console.log(url);
 	var options = {
 		uri: url,
@@ -166,7 +166,7 @@ async function getStockPrice(symb){
 }
 
 async function getCompanyData(symb){
-	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/company';
+	var url = 'https://cloud.iexapis.com/beta/stock/'+encodeURIComponent(symb)+'/company';
 	//console.log(url);
 	var options = {
 		uri: url,
@@ -188,7 +188,7 @@ async function getCompanyData(symb){
 }
 
 async function getKeyStats(symb){
-	var url = 'https://cloud.iexapis.com/beta/stock/'+symb+'/stats';
+	var url = 'https://cloud.iexapis.com/beta/stock/'+encodeURIComponent(symb)+'/stats';
 	console.log(url);
 	var options = {
 		uri: url,
